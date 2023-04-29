@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Registration Form</title>
+	<style>
+		form {
+			width: 400px;
+			margin: 0 auto;
+			border: 2px solid #ddd;
+			padding: 20px;
+			border-radius: 5px;
+			font-family: Arial, sans-serif;
+		}
+
+		input[type="text"],
+		input[type="email"],
+		input[type="password"],
+		input[type="date"],
+		input[type="checkbox"] {
+			width: 100%;
+			padding: 10px;
+			margin-bottom: 20px;
+			border: 1px solid #ccc;
+			border-radius: 3px;
+			font-size: 16px;
+		}
+
+		input[type="submit"] {
+			background-color: #4CAF50;
+			color: white;
+			padding: 10px 20px;
+			border: none;
+			border-radius: 3px;
+			font-size: 16px;
+			cursor: pointer;
+		}
+
+		input[type="submit"]:hover {
+			background-color: #3e8e41;
+		}
+
+		.error {
+			color: red;
+			font-size: 14px;
+			margin-top: -10px;
+			margin-bottom: 10px;
+		}
+
+		.success {
+			color: green;
+			font-size: 14px;
+			margin-top: -10px;
+			margin-bottom: 10px;
+		}
+	</style>
+</head>
+<body>
+	<form method="post" action="" id="registration-form">
+		<h2>Registration Form</h2>
+			<label for="name">Name:</label>
+			<input type="text" id="name" name="name" required>
+
+			<label for="email">Email:</label>
+			<input type="email" id="email" name="email" required>
+
+			<label for="password">Password:</label>
+			<input type="password" id="password" name="password" required>
+
+			<label for="dob">Date of Birth:</label>
+			<input type="date" id="dob" name="dob" required>
+
+			<input type="checkbox" id="terms" name="terms" required>
+			<label for="terms">I accept the terms and conditions</label>
+
+			<input type="submit" value="Submit">
+	</form>
+  <script>
+    var form = document.getElementById("registration-form");
+    form.addEventListener("submit", function (event) {
+      var name = document.getElementById("name");
+      var email = document.getElementById("email");
+      var password = document.getElementById("password");
+      var dob = document.getElementById("dob");
+      var terms = document.getElementById("terms");
+  
+      var errors = [];
+  
+      if (name.value.trim() === "") {
+        errors.push("Name is required");
+      }
+  
+      if (email.value.trim() === "") {
+        errors.push("Email is required");
+      } else if (!/\S+@\S+\.\S+/.test(email.value)) {
+        errors.push("Invalid email format");
+      }
+  
+      if (password.value.trim() === "") {
+        errors.push("Password is required");
+      } else if (password.value.length < 8) {
+        errors.push("Password must be at least 8 characters");
+      }
+  
+      if (dob.value.trim() === "") {
+        errors.push("Date of Birth is required");
+      } else if (!/\d{4}-\d{2}-\d{2}/.test(dob.value)) {
+        errors.push("Invalid date format. Please use yyyy-mm-dd.");
+      }
+  
+      if (!terms.checked) {
+        errors.push("You must accept the terms and conditions");
+      }
+  
+      if (errors.length > 0) {
+        event.preventDefault();
+        var errorList = document.getElementById("error-list");
+        errorList.innerHTML = "";
+        for (var i = 0; i < errors.length; i++) {
+          var error = errors[i];
+          var li = document.createElement("li");
+          li.textContent = error;
+          errorList.appendChild(li);
+        }
+        errorList.style.display = "block";
+      } else {
+        var successMessage = document.getElementById("success-message");
+        successMessage.style.display = "block";
+      }
+    });
+  </script>
+</body>
+</html>
