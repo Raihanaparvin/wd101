@@ -1,169 +1,107 @@
 <!DOCTYPE html>
 <html>
+  <head>
+    <title>Registration Form</title>
+    <script>
+      function validateForm() {
+        var name = document.forms["regForm"]["name"].value;
+        var email = document.forms["regForm"]["email"].value;
+        var password = document.forms["regForm"]["password"].value;
+        var dob = document.forms["regForm"]["dob"].value;
+        var acceptTerms = document.forms["regForm"]["acceptTerms"].checked;
 
-<head>
-	<title>Registration Form</title>
-	<style>
-		/* CSS styling goes here */
-		label {
-			display: block;
-			margin-bottom: 10px;
-		}
+        if (name == "" || email == "" || password == "" || dob == "" || !acceptTerms) {
+          alert("Please fill in all fields and accept the terms and conditions.");
+          return false;
+        }
 
-		input[type="text"],
-		input[type="email"],
-		input[type="password"],
-		input[type="date"],
-		input[type="checkbox"] {
-			width: 100%;
-			padding: 10px;
-			border: 1px solid #ccc;
-			border-radius: 4px;
-			box-sizing: border-box;
-			margin-bottom: 20px;
-		}
+        // Add more validation rules here if needed.
 
-		input[type="submit"] {
-			background-color: #4CAF50;
-			color: white;
-			padding: 12px 20px;
-			border: none;
-			border-radius: 4px;
-			cursor: pointer;
-		}
+        return true;
+      }
 
-		input[type="submit"]:hover {
-			background-color: #45a049;
-		}
+      function saveData() {
+        if (validateForm()) {
+          var name = document.forms["regForm"]["name"].value;
+          var email = document.forms["regForm"]["email"].value;
+          var password = document.forms["regForm"]["password"].value;
+          var dob = document.forms["regForm"]["dob"].value;
 
-		.error {
-			color: red;
-		}
+          // Save data to local storage.
+          var users = JSON.parse(localStorage.getItem("users")) || [];
+          users.push({ name: name, email: email, password: password, dob: dob });
+          localStorage.setItem("users", JSON.stringify(users));
 
-		.success {
-			color: green;
-		}
+          // Refresh table with updated data.
+          displayData();
+          
+          // Clear form.
+          document.getElementById("regForm").reset();
 
-		table {
-			border-collapse: collapse;
-			margin-top: 20px;
-		}
+          alert("Registration successful!");
+        }
+      }
 
-		th,
-		td {
-			border: 1px solid #ddd;
-			padding: 8px;
-		}
+      function displayData() {
+        var users = JSON.parse(localStorage.getItem("users")) || [];
+        var table = document.getElementById("userTable");
+        table.innerHTML = "";
 
-		th {
-			background-color: #f2f2f2;
-		}
-	</style>
-</head>
+        // Create table headers.
+        var row = table.insertRow(0);
+        var nameHeader = row.insertCell(0);
+        var emailHeader = row.insertCell(1);
+        var dobHeader = row.insertCell(2);
 
-<body>
-	<h1>Registration Form</h1>
-	<form id="registration-form" method="post">
-		<label for="name">Name:</label>
-		<input type="text" id="name" name="name" />
+        nameHeader.innerHTML = "<b>Name</b>";
+        emailHeader.innerHTML = "<b>Email</b>";
+        dobHeader.innerHTML = "<b>Date of Birth</b>";
 
-		<label for="email">Email:</label>
-		<input type="email" id="email" name="email" />
+        // Add data rows to table.
+        for (var i = 0; i < users.length; i++) {
+          var user = users[i];
+          var row = table.insertRow(i + 1);
+          var nameCell = row.insertCell(0);
+          var emailCell = row.insertCell(1);
+          var dobCell = row.insertCell(2);
 
-		<label for="password">Password:</label>
-		<input type="password" id="password" name="password" />
+          nameCell.innerHTML = user.name;
+          emailCell.innerHTML = user.email;
+          dobCell.innerHTML = user.dob;
+        }
+      }
+    </script>
+  </head>
 
-		<label for="dob">Date of Birth:</label>
-		<input type="date" id="dob" name="dob" />
+  <body>
+    <h1>Registration Form</h1>
 
-		<label for="terms">
-			<input type="checkbox" id="terms" name="terms" />
-			I accept the terms and conditions
-		</label>
+    <form name="regForm">
+      <label for="name">Name:</label>
+      <input type="text" id="name" name="name"><br>
 
-		<input type="submit" value="Submit" />
-	</form>
+      <label for="email">Email:</label>
+      <input type="email" id="email" name="email"><br>
 
-	<div id="error-list"></div>
+      <label for="password">Password:</label>
+      <input type="password" id="password" name="password"><br>
 
-	<div id="success-message" style="display: none;">
-		<p class="success">Registration successful!</p>
-		<table>
-			<tr>
-				<th>Field</th>
-				<th>Value</th>
-			</tr>
-			<tr>
-				<td>Name</td>
-				<td id="name-value"></td>
-			</tr>
-			<tr>
-				<td>Email</td>
-				<td id="email-value"></td>
-			</tr>
-			<tr>
-				<td>Date of Birth</td>
-				<td id="dob-value"></td>
-			</tr>
-		</table>
-	</div>
+      <label for="dob">Date of Birth:</label>
+      <input type="date" id="dob" name="dob"><br>
 
-	<script>
-		var form = document.getElementById("registration-form");
-		var errorList = document.getElementById("error-list");
-		var successMessage = document.getElementById("success-message");
-		var nameValue = document.getElementById("name-value");
-		var emailValue = document.getElementById("email-value");
-		var dobValue = document.getElementById("dob-value");
+      <input type="checkbox" id="acceptTerms" name="acceptTerms">
+      <label for="acceptTerms">I accept the terms and conditions.</label><br>
 
-		form.addEventListener("submit", function (event) {
-			event.preventDefault();
+      <input type="button" value="Submit" onclick="saveData()">
+    </form>
 
-			var name = document.getElementById("name");
-			var email = document.getElementById("email");
-			var password = document.getElementById("password");
-			var dob = document.getElementById("dob");
-			var terms = document.getElementById("terms");
-
-			var errors = [];
-
-			if (name.value.trim() === "") {
-				errors.push("Name is required");
-			}
-
-			if (email.value.trim() === "") {
-				errors.push("Email is required");
-			} else if (!/\S+@\S+\.\S+/.test(email.value)) {
-				errors.push("Invalid email address");
-			}
-
-			if (password.value.trim() === "") {
-				errors.push("Password is required");
-			}
-
-			if (dob.value === "") {
-				errors.push("Date of Birth is required");
-			}
-
-			if (!terms.checked) {
-				errors.push("You must accept the terms and conditions");
-			}
-
-			if (errors.length > 0) {
-				errorList.innerHTML = "";
-				for (var i = 0; i < errors.length; i++) {
-					errorList.innerHTML += "<p class='error'>" + errors[i] + "</p>";
-				}
-				successMessage.style.display = "none";
-			} else {
-				errorList.innerHTML = "";
-				nameValue.innerHTML = name.value;
-				emailValue.innerHTML = email.value;
-				dobValue.innerHTML = dob.value;
-				successMessage.style.display = "block";
-			}
-		});
-	</script>
-</body>
-
+    <table id="userTable" border="1">
+    </table>
+  </body>
+  
+  <script>
+    displayData();
+  </script>
 </html>
+
+
